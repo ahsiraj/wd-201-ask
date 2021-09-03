@@ -179,8 +179,9 @@ puts " =========Result============"
 
 todotable = {}
 todos.each { |activity|
-  if (todotable[activity[1].to_sym()] == nil) #if the array is empty
-    todotable[activity[1].to_sym()] = [activity[0]]
-  else todotable[activity[1].to_sym()].push(activity[0])   end #array not empty
+  actsym = activity[1].to_sym() # converted as symbol
+  if (todotable[actsym] == nil) #if the array is empty
+    todotable[actsym] = [activity[0]]
+  else todotable[actsym].push(activity[0])   end #array not empty
 }
 puts todotable
