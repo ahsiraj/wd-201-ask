@@ -1,0 +1,76 @@
+ Ruby Block
+
+
+ A "block" is a piece of code that we pass to methods like each, map and so on. We can write them with either of these syntaxes:
+
+the one-line syntax
+
+[1, 2, 3].each { |x| puts x }
+
+1
+2
+3
+
+the multi-line syntax
+
+[1, 2, 3].each do |x|
+  puts x
+end
+
+1
+2
+3
+
+Both syntaxes work the same, but we tend to use the do..end form when the expression has multiple lines, and prefer the { |x| .. } form when it is just a single line.
+
+Remember that in Ruby, the last evaluated expression is implicitly its return value. That is why this map function works correctly:
+
+numbers = [1,2,3].map do |i|
+  x = i + 2
+  x = x * 2
+  x
+end
+
+We're not explicitly using a return here, but since x is the last expression in the block, that is the value being returned.
+Using blocks in our own functions
+
+It is not just the standard Ruby functions that can take blocks as arguments. We can write our own methods that can do that as well. We're not going to be using that feature in this course, but we'll take a brief look so you know how it works under the hood.
+
+We can use the yield keyword to execute the block passed to our function. Let's take a look at a simple example:
+
+def run_once
+   yield
+end
+
+run_once { puts "This block was run!" }
+
+# prints "This block was run!"
+
+We can make the block accept a parameter, and our function can pass them in:
+
+def run_thrice_with_index
+	yield 0
+	yield 1
+	yield 2
+end
+
+run_thrice_with_index { |i| puts "#{i} Tada!" }
+0 Tada!
+1 Tada!
+2 Tada!
+=> nil
+
+The return value of yield is available in our function so we can do some processing with it:
+
+def wrap_div
+  "<div>#{yield}</div>"
+end
+
+puts wrap_div { "hello!" }
+# <div>hello!</div>
+
+What we've seen so far are called "implicit blocks". The function implicitly assumes that we have passed a block to it and executes it using yield. There are also explicit blocks in Ruby where you can receive it as an argument.
+
+Block is one of the key reasons for Ruby's ergonomics. It lets us write code that reads like prose, and is widely used in idiomatic Ruby code.
+
+For further reference, see https://dev.to/baweaver/understanding-ruby-blocks-procs-and-lambdas-24o0.
