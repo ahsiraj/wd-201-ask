@@ -11,12 +11,19 @@ class Todo
     #date.strftime("%Y-%m-%d")
   end
 
+  def overdue?
+    puts "here"
+    #puts @activity, @due_date, @completed
+    return !@complted && @due_date < Date.today
+  end
+
   # =====================================================================
 
   def to_displayable_string
     # FILL YOUR CODE HERE(2/4)
     # =====================================================================
-
+    puts "0000 #{@activity} #{@due_date}"
+    return "#{@activity} #{@due_date}"
     # =====================================================================
 
   end
@@ -35,6 +42,9 @@ class TodosList
   # =====================================================================
   def add(todo)
     @todos.push(todo)
+    #puts todo
+    #puts "----666"
+    #puts @todos.each { |todo| puts todo.activity }
   end
 
   # =====================================================================
@@ -42,7 +52,14 @@ class TodosList
   def to_displayable_list
     # FILL YOUR CODE HERE(4/4)
     # =====================================================================
-
+    #@todos.to_displayable_string
+    puts "In to_displayable_list"
+    # puts @todos.each { |todo| puts todo[@activity] }
+    #puts @todos[activity]
+    list = ""
+    @todos.each { |todo| list += todo.to_displayable_string }
+    puts "-99---" + list
+    return list
     # =====================================================================
 
   end
