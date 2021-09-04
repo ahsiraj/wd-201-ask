@@ -6,15 +6,20 @@ class Todo
   # =====================================================================
   def initialize(activity, due_date, completed)
     @activity = activity
-    @due_date = due_date #.strftime("%Y-%m-%d")
-    @completed = completed
-    #date.strftime("%Y-%m-%d")
+    @due_date = due_date
+    @completed = completed #boolean
   end
 
   def overdue?
-    puts "here"
-    #puts @activity, @due_date, @completed
     return !@complted && @due_date < Date.today
+  end
+
+  def due_today?
+    @due_date == Date.today
+  end
+
+  def due_later?
+    @due_date > Date.today
   end
 
   # =====================================================================
@@ -22,8 +27,18 @@ class Todo
   def to_displayable_string
     # FILL YOUR CODE HERE(2/4)
     # =====================================================================
-    puts "0000 #{@activity} #{@due_date}"
-    return "#{@activity} #{@due_date}"
+
+    if due_today?
+      if @completed
+        "[X] #{@activity}"
+      else
+        "[ ] #{@activity}"
+      end
+    elsif (due_later? && @completed)
+      "[X] #{@activity} #{@due_date}"
+    else
+      "[ ] #{@activity} #{@due_date}"
+    end
     # =====================================================================
 
   end
@@ -40,11 +55,17 @@ class TodosList
 
   # FILL YOUR CODE HERE(3/4)
   # =====================================================================
+
+  def due_today
+    TodosList.new(@todos.filter { |todo| todo.due_today? })
+  end
+
+  def due_later
+    TodosList.new(@todos.filter { |todo| todo.due_later? })
+  end
+
   def add(todo)
     @todos.push(todo)
-    #puts todo
-    #puts "----666"
-    #puts @todos.each { |todo| puts todo.activity }
   end
 
   # =====================================================================
@@ -52,14 +73,9 @@ class TodosList
   def to_displayable_list
     # FILL YOUR CODE HERE(4/4)
     # =====================================================================
-    #@todos.to_displayable_string
-    puts "In to_displayable_list"
-    # puts @todos.each { |todo| puts todo[@activity] }
-    #puts @todos[activity]
-    list = ""
-    @todos.each { |todo| list += todo.to_displayable_string }
-    puts "-99---" + list
-    return list
+    display_list = ""
+    @todos.each { |todo| display_list += todo.to_displayable_string + "\n" }
+    display_list
     # =====================================================================
 
   end
