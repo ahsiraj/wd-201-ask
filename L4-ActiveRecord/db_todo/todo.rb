@@ -20,7 +20,7 @@ class Todo < ActiveRecord::Base
   def to_displayable_string
     display_status = completed ? "[X]" : "[ ]"
     display_date = due_today? ? nil : due_date
-    "#{display_status} #{todo_text} #{display_date}"
+    "#{id}. #{display_status} #{todo_text} #{display_date}"
   end
 
   def self.to_displayable_list
@@ -35,21 +35,33 @@ class Todo < ActiveRecord::Base
 
   #=end
   def self.show_list
-    display_list = to_displayable_list
+    display_list = all.where(completed: true).to_displayable_list
+
+    #display_list = to_displayable_list
     puts "My Todo-list\n\n"
-    puts display_list
+    #puts display_list
+    all.map { |todo| puts "#{todo.id} #{todo.todo_text} #{todo.due_date} #{todo.completed} " }
 
     puts "Overdue\n"
-    all.map { |todo| puts todo.over_due? ? "#{todo.id}. #{display_list[todo.id]}" : nil }
+    #all.map { |todo| puts todo.over_due? ? "#{todo.id}. #{display_list[todo.id + 1]}" : nil }
+    #overdue_list = all.where(due_date < Date.today).to_displayable_list
+    today = Date.today
+    #puts all.where("due_date < 'today'")
+    #puts all.where("due_date < 'today'").to_displayable_list
+    #puts all.where("due_date < 'today'", completed: false).to_displayable_list
+    puts (all.where("due_date < 'today'").and all.where(completed: false)).to_displayable_list
+    #puts all.where(completed: false).to_displayable_list
 
     puts "\n\n"
 
     puts "Due Today\n"
-    all.map { |todo| puts todo.due_today? ? "#{todo.id}. #{display_list[todo.id]}" : nil }
+    puts all.where(due_date: today).to_displayable_list
+    #   all.map { |todo| puts todo.due_today? ? "#{todo.id}. #{display_list[todo.id]}" : nil }
     puts "\n\n"
 
     puts "Due Later\n"
-    all.map { |todo| puts todo.due_later? ? "#{todo.id}. #{display_list[todo.id]}" : nil }
+    puts all.where("due_date > 'today'").to_displayable_list
+    #all.map { |todo| puts todo.due_later? ? "#{todo.id}. #{display_list[todo.id]}" : nil }
     puts "\n\n"
   end
 
