@@ -2,19 +2,8 @@ require "active_record"
 require "./connect_db.rb"
 
 class Todo < ActiveRecord::Base
-
-  #=begin
-
   def due_today?
     due_date == Date.today
-  end
-
-  def over_due?
-    due_date < Date.today && !completed
-  end
-
-  def due_later?
-    due_date > Date.today
   end
 
   def to_displayable_string
@@ -27,13 +16,6 @@ class Todo < ActiveRecord::Base
     all.map { |todo| todo.to_displayable_string }
   end
 
-  def self.status
-    today = Date.today
-    puts today
-    if due_date < today && !completed then status = "Overdue" elsif due_date == today then status = "Due Today" else status = "Due Later" end
-  end
-
-  #=end
   def self.show_list
     today = Date.today
 
