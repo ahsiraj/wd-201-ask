@@ -49,18 +49,31 @@ class Todo < ActiveRecord::Base
     #puts all.where("due_date < 'today'")
     #puts all.where("due_date < 'today'").to_displayable_list
     #puts all.where("due_date < 'today'", completed: false).to_displayable_list
-    puts (all.where("due_date < 'today'").and all.where(completed: false)).to_displayable_list
+    #date_over_list = all.where("due_date < 'today'")
+    #incomplete_list = all.where(completed: false)
+
+    overdue_list = all.where("due_date < 'today'")
+    #overdue_list =date_over_list.and incomplete_list
+    #(all.where("due_date < 'today'").and all.where(completed: false))
+    overdue_list_displayable = overdue_list.to_displayable_list
+    puts overdue_list_displayable
     #puts all.where(completed: false).to_displayable_list
 
     puts "\n\n"
 
     puts "Due Today\n"
-    puts all.where(due_date: today).to_displayable_list
+    due_today_list = all.where(due_date: today)
+    due_today_list_displayable = due_today_list.to_displayable_list
+    #puts all.where(due_date: today).to_displayable_list
+    puts due_today_list_displayable
     #   all.map { |todo| puts todo.due_today? ? "#{todo.id}. #{display_list[todo.id]}" : nil }
     puts "\n\n"
 
     puts "Due Later\n"
-    puts all.where("due_date > 'today'").to_displayable_list
+    due_later_list = all.where("due_date > 'today'")
+    due_later_list_displayable = due_later_list.to_displayable_list
+    puts due_later_list_displayable
+    #puts all.where("due_date > 'today'").to_displayable_list
     #all.map { |todo| puts todo.due_later? ? "#{todo.id}. #{display_list[todo.id]}" : nil }
     puts "\n\n"
   end
