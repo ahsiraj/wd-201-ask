@@ -24,35 +24,38 @@ dns_raw = File.readlines("zone")
 # ..
 # ..
 #====================================================================================================
-def parse_dns(dns_raw) # dns entries from the file are structured here
-  dns_array = []
-  dns_records = {}
-  dns_raw.each { |line| # each line is processed
-    if line.strip != "" && !line.strip.start_with?("#") # empty, only space, and comment lines omitted
-      #  puts line
-      dns_array.push(line.split(",").map(&:strip)) # pushed the dns entries from each line after removing space if any
-    end
-  }
-  #puts dns_array
-  #puts "---------------"
-  dns_array.each { |type, source, destination| dns_records[source.to_sym] = [type, destination] } #dns source is taken as the key
-  #puts dns_records
+def parse_dns(raw)
+  raw = raw.map(&:strip) # removes space on either side
+  raw = raw.reject { |line| line.empty? } #removes empty lines
+  raw = raw.reject { |line| line.start_with?("#") } #removes comment lines
+  recordlines = raw.map { |line| line.strip.split(", ") }
+  recordlines = recordlines.reject { |record| record.length != 3 }
+
+  dns_records = recordlines.each_with_object({}) do |record, records| records[record[1]] =
+    { type: record.first, target: record.last }   end #hashing based on source
   dns_records
 end
 
 def resolve(dns_records, lookup_chain, domain) #dns resolution
-  matched_dns = dns_records[domain.to_sym] # entry in the table
-  if matched_dns == nil #no match
-    lookup_chain.push("Domain name could not be resolved. Recheck for typos!")
-  elsif matched_dns[0] == "A" #IP address match
-    lookup_chain.push(matched_dns[1])
-  elsif matched_dns[0] == "CNAME"
-    lookup_chain.push(matched_dns[1])
-    resolve(dns_records, lookup_chain, matched_dns[1]) # recrsive call for CNAME type
-  else # entry is there, but type mismatch
-    lookup_chain.push(matched_dns[1])
-    lookup_chain.push("Could not finish the resolve chain. Something is wrong. Internal entry type mismatch.")
+  matched_dns = dns_records[domain] # entry in the table
+
+  if (!matched_dns)
+    lookup_chain << "Error: Record not found for " + domain
+    return lookup_chain
   end
+
+  if (matched_dns[:type] == "A") #IP address match
+    lookup_chain << matched_dns[:target]
+    return lookup_chain
+  end
+
+  if (matched_dns[:type] == "CNAME")
+    lookup_chain << matched_dns[:target]
+    resolve(dns_records, lookup_chain, matched_dns[:target]) # recrsive call for CNAME type
+    return lookup_chain
+  end
+  lookup_chain << "Invalid record type for " + domain
+  return lookup_chain
 end
 
 #=======================================================================================================
