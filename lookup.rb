@@ -20,45 +20,44 @@ dns_raw = File.readlines("zone")
 
 # ..
 # ..
-# FILL YOUR CODE HERE. Filled!(ask - 4/9/21)
+# FILL YOUR CODE HERE.
 # ..
 # ..
-#====================================================================================================
 def parse_dns(raw)
-  raw = raw.map(&:strip) # removes space on either side
-  raw = raw.reject { |line| line.empty? } #removes empty lines
-  raw = raw.reject { |line| line.start_with?("#") } #removes comment lines
+  raw = raw.map(&:strip)
+  raw = raw.reject { |line| line.empty? }
+  raw = raw.reject { |line| line.start_with?("#") }
   recordlines = raw.map { |line| line.strip.split(", ") }
   recordlines = recordlines.reject { |record| record.length != 3 }
 
   dns_records = recordlines.each_with_object({}) do |record, records| records[record[1]] =
-    { type: record.first, target: record.last }   end #hashing based on source
+    { type: record.first, target: record.last }   end
   dns_records
 end
 
-def resolve(dns_records, lookup_chain, domain) #dns resolution
-  matched_dns = dns_records[domain] # entry in the table
+def resolve(dns_records, lookup_chain, domain)
+  matched_dns = dns_records[domain]
 
   if (!matched_dns)
     lookup_chain << "Error: Record not found for " + domain
     return lookup_chain
   end
 
-  if (matched_dns[:type] == "A") #IP address match
+  if (matched_dns[:type] == "A")
     lookup_chain << matched_dns[:target]
     return lookup_chain
   end
 
   if (matched_dns[:type] == "CNAME")
     lookup_chain << matched_dns[:target]
-    resolve(dns_records, lookup_chain, matched_dns[:target]) # recrsive call for CNAME type
+    resolve(dns_records, lookup_chain, matched_dns[:target])
     return lookup_chain
   end
+
   lookup_chain << "Invalid record type for " + domain
   return lookup_chain
 end
 
-#=======================================================================================================
 # To complete the assignment, implement `parse_dns` and `resolve`.
 # Remember to implement them above this line since in Ruby
 # you can invoke a function only after it is defined.
