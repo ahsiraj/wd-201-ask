@@ -2,16 +2,15 @@ require "date"
 
 class Todo
 
-  # FILL YOUR CODE HERE(1/4)
-  # =====================================================================
-  def initialize(activity, due_date, completed)
-    @activity = activity
+  # FILL YOUR CODE HERE
+  def initialize(text, due_date, completed)
+    @text = text
     @due_date = due_date
-    @completed = completed #boolean
+    @completed = completed
   end
 
   def overdue?
-    return !@complted && @due_date < Date.today
+    return @due_date < Date.today
   end
 
   def due_today?
@@ -22,25 +21,12 @@ class Todo
     @due_date > Date.today
   end
 
-  # =====================================================================
-
   def to_displayable_string
-    # FILL YOUR CODE HERE(2/4)
-    # =====================================================================
+    # FILL YOUR CODE HERE
 
-    if due_today?
-      if @completed
-        "[X] #{@activity}"
-      else
-        "[ ] #{@activity}"
-      end
-    elsif (due_later? && @completed)
-      "[X] #{@activity} #{@due_date}"
-    else
-      "[ ] #{@activity} #{@due_date}"
-    end
-    # =====================================================================
-
+    display_status = @completed ? "[X]" : "[ ]"
+    display_date = due_today? ? nil : @due_date
+    "#{display_status} #{@text} #{display_date}"
   end
 end
 
@@ -53,8 +39,7 @@ class TodosList
     TodosList.new(@todos.filter { |todo| todo.overdue? })
   end
 
-  # FILL YOUR CODE HERE(3/4)
-  # =====================================================================
+  # FILL YOUR CODE HERE
 
   def due_today
     TodosList.new(@todos.filter { |todo| todo.due_today? })
@@ -68,16 +53,9 @@ class TodosList
     @todos.push(todo)
   end
 
-  # =====================================================================
-
   def to_displayable_list
-    # FILL YOUR CODE HERE(4/4)
-    # =====================================================================
-    display_list = ""
-    @todos.each { |todo| display_list += todo.to_displayable_string + "\n" }
-    display_list
-    # =====================================================================
-
+    # FILL YOUR CODE HERE
+    @todos.map { |todo| todo.to_displayable_string }
   end
 end
 
